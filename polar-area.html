@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Polar Area Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <style>
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="canvas-holder" style="width:75%">
+        <canvas id="chart-area"></canvas>
+    </div>
+
+    <script>
+
+    var config = {
+        data: {
+            datasets: [{
+                data: [
+                    1,10,1,20,5,0,15
+                ],
+                backgroundColor: [
+                    "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728",
+                ],
+                label: 'Appliance' // for legend
+            }],
+            labels: [
+                "03182", "03454", "02052", "03048", "02813", "03727", "04063"
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'right',
+            },
+            title: {
+                display: true,
+                text: 'SPHERE Home Percentage Energy Consumed by Appliance',
+            },
+            scale: {
+              ticks: {
+                beginAtZero: true
+              },
+              reverse: false
+            },
+            animation: {
+                animateRotate: false,
+                animateScale: true
+            }
+        }
+    };
+
+    window.onload = function() {
+        var ctx = document.getElementById("chart-area");
+        window.myPolarArea = Chart.PolarArea(ctx, config);
+    };
+
+    $('#randomizeData').click(function() {
+        $.each(config.data.datasets, function(i, piece) {
+            $.each(piece.data, function(j, value) {
+                config.data.datasets[i].data[j] = randomScalingFactor();
+                config.data.datasets[i].backgroundColor[j] = randomColor();
+            });
+        });
+        window.myPolarArea.update();
+    });
+
+    $('#addData').click(function() {
+        if (config.data.datasets.length > 0) {
+            config.data.labels.push('dataset #' + config.data.labels.length);
+
+            $.each(config.data.datasets, function(i, dataset) {
+                dataset.backgroundColor.push(randomColor());
+                dataset.data.push(randomScalingFactor());
+            });
+
+            window.myPolarArea.update();
+        }
+    });
+
+    $('#removeData').click(function() {
+        config.data.labels.pop(); // remove the label first
+
+        $.each(config.data.datasets, function(i, dataset) {
+            dataset.backgroundColor.pop();
+            dataset.data.pop();
+        });
+
+        window.myPolarArea.update();
+    });
+    </script>
+</body>
+
+</html>
